@@ -1,0 +1,88 @@
+public void Init(Dictionary dictionary)
+        {
+            _dictionary.Add(dictionary);
+        }
+        
+        public void Init(string path)
+        {
+            if (CheckDirrectoryLike(path))
+            {
+                _dictionary.Add(new Dictionary(path));
+            }
+        }
+
+public void Status()
+        {
+            if (_choosenDictionary == null)
+            {
+                Console.WriteLine("Сначала выберите дирректорию!");
+                return;
+            }
+                if (!_choosenDictionary.Applyed)
+                {
+                    Console.WriteLine($"\nДерриктория: {_choosenDictionary.path}");
+                    var dictionaryCopy = new Dictionary(_choosenDictionary.path);
+                    for (int i = 0; i < _choosenDictionary.GitFiles.Count; i++)
+                    {
+                        var dictionaryOwner = _choosenDictionary;
+                        CheckForDeleted(ref dictionaryOwner, ref dictionaryCopy, i);
+                    }
+
+                    foreach (var file in _choosenDictionary.GitFiles)
+                    {
+                        if(!file.Applyed)Console.WriteLine(
+                            $"Название:{file.FileName},Размер {file.Size},Дата создания{file.Created},Дата модификации{file.Modified},Статус:{file.FileStatus}");
+                    }
+            }
+        }
+
+public void Init(Dictionary dictionary)
+        {
+            _dictionary.Add(dictionary);
+        }
+
+public void Remove(string fullPath)
+        {
+                for (int i = 0; i < _choosenDictionary.GitFiles.Count; i++)
+                {
+                    if (_choosenDictionary.GitFiles[i].FileName == fullPath)
+                    {
+                        _choosenDictionary.GitFiles[i].FileStatus = FileStatus.Removed;
+                        return;
+                    }
+                }
+            Console.WriteLine("Файла не обнаружено");
+        }
+public void Apply(string dirPath)
+        {
+            foreach (var dictionary in _dictionary)
+            {
+                if (dictionary.path == dirPath)
+                {
+                    foreach (var file in dictionary.GitFiles)
+                    {
+                        if (file.FileStatus != FileStatus.New)
+                        {
+                            //file.FileStatus = FileStatus.Null;
+                            file.Applyed = true;
+                        }
+                    }
+                    Console.WriteLine("Данные успешно сохранены");
+                    return;
+                }
+            }
+            Console.WriteLine("Файла не обнаружено");
+        }
+private bool CheckDirrectoryLike(string path)
+        {
+            foreach (var dirrectory in _dictionary)
+            {
+                if (dirrectory.path == path)
+                {
+                    Console.WriteLine("Дерриктория уже находится под версионным контролем");
+                    return false;
+                }
+            }
+
+            return true;
+        }
